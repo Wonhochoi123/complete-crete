@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Quote Request - Complete Crete</title>
+
+  <style>
+    body {
+      background-image: url('images/bg_3.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 900px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 1330px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Navbar -->
+
+
+<!-- Main Content -->
+<div class="container">
+  <ul class="navbar-nav ml-auto">
+    <li class="button"><a class="nav-link" href="portal.html">Back to Portal</a></li>
+  </ul>
+  <!-- Embed Google Form with autofilled values -->
+  <iframe id="quoteForm" src="" width="640" height="1330" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+</div>
+
+<!-- Scripts -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const customerData = JSON.parse(localStorage.getItem('customerData'));
+    let formUrl;
+
+    if (customerData) {
+      // Use autofilled Google Form URL if customer is logged in
+      const firstName = encodeURIComponent(customerData.first_name);
+      const lastName = encodeURIComponent(customerData.last_name);
+      const phone = encodeURIComponent(customerData.phone);
+      const email = encodeURIComponent(customerData.email);
+
+      formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSdmWdss3-SIVOG2iLYr3Ut8TUgs7iD4ybJMl4WnLe_F-_jj6A/viewform?embedded=true&usp=pp_url&entry.876105168=${firstName}%20${lastName}&entry.513016502=${phone}&entry.506721329=${email}`;
+    } else {
+      // Use regular Google Form URL if user is not logged in
+      formUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdmWdss3-SIVOG2iLYr3Ut8TUgs7iD4ybJMl4WnLe_F-_jj6A/viewform?embedded=true';
+    }
+
+    // Set the iframe src to the appropriate form URL
+    document.getElementById('quoteForm').src = formUrl;
+  });
+</script>
+
+</body>
+</html>
