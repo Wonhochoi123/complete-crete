@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <title>Manage Account - Complete Crete</title>
+</head>
+<body>
+
+<!-- Top Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="manage-account.html">Manage Account</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="portal.html">Back to Portal</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div style="height: 24px;"></div> <!-- Spacer -->
+
+
+<!-- Main Content -->
+<div class="container mt-5">
+  <h2> </h2>
+  <form id="manageAccountForm">
+    <div class="form-group">
+      <label for="userId">User ID</label>
+      <input type="text" class="form-control" id="userId" readonly>
+      <button class="btn btn-secondary mt-2" onclick="copyToClipboard()">Copy ID</button>
+    </div>
+    <div class="form-group">
+      <label for="firstName">First Name</label>
+      <input type="text" class="form-control" id="firstName">
+    </div>
+    <div class="form-group">
+      <label for="lastName">Last Name</label>
+      <input type="text" class="form-control" id="lastName">
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" class="form-control" id="email">
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" class="form-control" id="phone">
+    </div>
+    <div class="form-group">
+      <label for="companyName">Company Name</label>
+      <input type="text" class="form-control" id="companyName">
+    </div>
+    <div class="form-group">
+      <label for="companyAddress">Company Address</label>
+      <input type="text" class="form-control" id="companyAddress">
+    </div>
+    <div class="form-group">
+      <label for="newPassword">New Password (leave empty if you don't want to change)</label>
+      <input type="password" class="form-control" id="newPassword">
+    </div>
+    <div class="form-group">
+      <label for="confirmPassword">Confirm New Password</label>
+      <input type="password" class="form-control" id="confirmPassword">
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </form>
+</div>
+
+<script>
+  // Fetch customer data and populate form
+  document.addEventListener('DOMContentLoaded', function () {
+    const customerData = JSON.parse(localStorage.getItem('customerData'));
+
+    document.getElementById('userId').value = customerData._id;
+    document.getElementById('firstName').value = customerData.first_name;
+    document.getElementById('lastName').value = customerData.last_name;
+    document.getElementById('email').value = customerData.email;
+    document.getElementById('phone').value = customerData.phone;
+    document.getElementById('companyName').value = customerData.company_name;
+    document.getElementById('companyAddress').value = customerData.company_address;
+  });
+
+  // Handle form submission
+  document.getElementById('manageAccountForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (newPassword !== confirmPassword) {
+      alert('Passwords do not match. Please retype the new password.');
+      return;  // Prevent form submission
+    }
+
+    const updatedData = {
+      customerId: document.getElementById('userId').value,
+      first_name: document.getElementById('firstName').value,
+      last_name: document.getElementById('lastName').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      company_name: document.getElementById('companyName').value,
+      company_address: document.getElementById('companyAddress').value,
+      password: newPassword  // Optional password change
+    };
+
+    fetch('http://localhost:5000/api/customers/update', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedData)
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.message === 'Account updated successfully') {
+                alert('Account updated successfully!');
+                localStorage.setItem('customerData', JSON.stringify(data.customer)); // Update localStorage
+              } else {
+                alert('Failed to update account.');
+              }
+            })
+            .catch(error => console.error('Error:', error));
+  });
+
+
+  // Function to copy ID
+  function copyToClipboard() {
+    const copyText = document.getElementById('userId');
+    copyText.select();
+    document.execCommand('copy');
+    alert('Copied ID: ' + copyText.value);
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="fonts/icomoon/style.css">
+  <link rel="stylesheet" href="css/owl.carousel.min.css">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+
+  <!-- Style -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <title>Customer Portal - Complete Crete</title>
+
+  <!-- Additional Styling for the Portal -->
+  <style>
+    body {
+      background-image: url('images/bg_3.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 900px;
+    }
+
+    .customer-name {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .portal-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .portal-buttons .btn {
+      margin: 10px 0;
+      width: 100%;
+      font-size: 1.2em;
+    }
+
+    .bottom-buttons {
+      position: absolute;
+      bottom: 30px;
+      left: 30px;
+    }
+
+    .bottom-buttons .btn {
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Top Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#" id="portalTitle">Customer Portal</a> <!-- Dynamic Title -->
+    <div class="ml-auto">
+      <select id="businessDropdown" class="form-control">
+        <!-- Business names will be dynamically populated -->
+        <option value="Business 1">Business 1</option>
+        <option value="Business 2">Business 2</option>
+      </select>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container mt-5">
+  <!-- Customer Name -->
+  <div class="customer-name" id="customerName">
+    Welcome, John Doe <!-- Placeholder for the customer's name -->
+  </div>
+
+  <!-- Portal Buttons (Vertically aligned) -->
+  <div class="portal-buttons">
+    <button class="btn btn-primary" onclick="window.location.href='quote-request.html'">Quote Request</button>
+    <button class="btn btn-primary" onclick="window.location.href='new-project.html'">New Project</button>
+    <button class="btn btn-primary">Open Projects</button>
+    <button class="btn btn-primary">Closed Projects</button>
+    <button class="btn btn-primary">Roll Off Service</button>
+  </div>
+</div>
+
+<!-- Bottom Buttons for switching business and managing account -->
+<div class="bottom-buttons">
+  <button class="btn btn-secondary">Switch Business</button>
+  <button class="btn btn-secondary" onclick="window.location.href='manage-account.html'">Manage Account</button>
+</div>
+
+<!-- Scripts -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+
+<!-- Script to dynamically update portal title -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const customerData = JSON.parse(localStorage.getItem('customerData'));
+
+    if (customerData && customerData.first_name && customerData.company_name) {
+      document.getElementById('portalTitle').textContent = `Customer Portal for ${customerData.first_name} from ${customerData.company_name}`;
+    } else {
+      alert('Login information is missing. Please log in again.');
+      window.location.href = 'index.html'; // Redirect to login page if data is missing
+    }
+  });
+
+
+</script>
+
+
+</body>
+</html>
