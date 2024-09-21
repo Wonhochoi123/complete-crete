@@ -8,14 +8,17 @@ const path = require('path');
 // Initialize express app
 const app = express();
 
+// CORS configuration: Allow Netlify domain
+const corsOptions = {
+  origin: 'https://complete-crete.netlify.app',  // Your Netlify domain
+  optionsSuccessStatus: 200, // For legacy browser support
+  methods: "GET, POST, PUT, DELETE"
+};
+app.use(cors(corsOptions));
+
 // Middleware
-app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public'))); // Serve static frontend files
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
 
 // Routes
 app.use('/api/customers', customerRoutes);
