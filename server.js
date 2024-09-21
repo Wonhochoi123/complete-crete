@@ -10,7 +10,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: 'master--complete-crete.netlify.app',  // Replace with your Netlify URL
+    origin: 'https://complete-crete.netlify.app',  // Replace with your Netlify URL
     methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allow the methods you need
     credentials: true
 }));
