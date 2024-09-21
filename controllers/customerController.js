@@ -1,5 +1,10 @@
 const bcrypt = require('bcrypt');
-const Customer = require('../models/Customer');
+const csvUtils = require('../utils/csvUtils');
+const path = require('path');
+const fs = require('fs');
+
+// CSV folder for customer data
+const customerFolderPath = './data/customers/';
 
 // Helper functions for validation
 function isValidEmail(email) {
@@ -12,44 +17,44 @@ function isValidPhone(phone) {
     return phonePattern.test(phone);
 }
 
+// Helper function to check for commas
+function hasComma(value) {
+    return typeof value === 'string' && value.includes(',');
+}
+
 // Register a new customer
 exports.createCustomer = async (req, res) => {
     const { first_name, last_name, email, password, phone, company_name, company_address } = req.body;
 
-    // Validate the data
-    if (!isValidEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email format' });
-    }
-    if (!isValidPhone(phone)) {
-        return res.status(400).json({ message: 'Invalid phone number' });
-    }
-    if (password.length < 8) {
-        return res.status(400).json({ message: 'Password must be at least 8 characters long' });
-    }
-
     try {
-        // Check if email already exists
-        const existingCustomer = await Customer.findOne({ email });
-        if (existingCustomer) {
-            return res.status(400).json({ message: 'Email already exists' });
+        // Validate for commas
+        if ([first_name, last_name, phone, company_name, company_address].some(hasComma)) {
+            return res.status(400).json({ message: 'Fields cannot contain commas.' });
+        }
+
+        // Check if customer already exists
+        const customerFilePath = path.join(customerFolderPath, `${email}.csv`);
+        if (fs.existsSync(customerFilePath)) {
+            return res.status(400).json({ message: 'Customer with this email already exists' });
         }
 
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create a new customer object
-        const newCustomer = new Customer({
+        // Create the customer data
+        const customerData = {
+            id: Date.now().toString(),
             first_name,
             last_name,
             email,
             password: hashedPassword,
             phone,
             company_name,
-            company_address,
-        });
+            company_address
+        };
 
-        // Save the new customer to the database
-        await newCustomer.save();
+        // Write the data to a new CSV file for this customer
+        csvUtils.writeDataToCustomerFile(email, customerData);
 
         // Respond with success
         res.status(201).json({ message: 'Customer created successfully' });
@@ -64,74 +69,95 @@ exports.loginCustomer = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Find customer by email
-        const customer = await Customer.findOne({ email });
+        // Read customer data from CSV file
+        const customerData = await csvUtils.readLastLineFromCustomerFile(email);
 
-        if (!customer) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+        if (!customerData) {
+            return res.status(400).json({ message: 'Email is not registered' });
         }
 
+        // Split the CSV line into its respective fields
+        const [id, first_name, last_name, customerEmail, hashedPassword, phone, company_name, company_address] = customerData.split(',');
+
         // Check password
-        const isMatch = await bcrypt.compare(password, customer.password);
+        const isMatch = await bcrypt.compare(password, hashedPassword);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid email or password' });
         }
 
-        // Send response
+        // Send response on successful login
         res.status(200).json({
             message: 'Login successful',
             customer: {
-                _id: customer._id,
-                first_name: customer.first_name,
-                last_name: customer.last_name,
-                company_name: customer.company_name,
-                email: customer.email,
-                password: customer.password,
-                company_address: customer.company_address,
-                phone: customer.phone
-
+                _id: id,
+                first_name,
+                last_name,
+                company_name,
+                email: customerEmail,
+                phone,
+                company_address
             }
         });
     } catch (error) {
         console.error('Error logging in customer:', error);
-        res.status(500).json({ message: 'Server error', error });
+        return res.status(500).json({ message: 'Server error' });
     }
 };
 
-// Update customer details
+// Update customer information
 exports.updateCustomer = async (req, res) => {
-    const { customerId, first_name, last_name, email, phone, company_name, company_address, password } = req.body;
+    const { id, first_name, last_name, email: old_email, new_email, password, phone, company_name, company_address } = req.body;
 
     try {
-        // Build updateData object only with the fields that are not empty
-        const updateData = {};
-        if (first_name) updateData.first_name = first_name;
-        if (last_name) updateData.last_name = last_name;
-        if (email) updateData.email = email;
-        if (phone) updateData.phone = phone;
-        if (company_name) updateData.company_name = company_name;
-        if (company_address) updateData.company_address = company_address;
-
-        // Hash the password if it's provided
-        if (password) {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            updateData.password = hashedPassword;
+        // Validate for commas
+        if ([first_name, last_name, phone, company_name, company_address].some(hasComma)) {
+            return res.status(400).json({ message: 'Fields cannot contain commas.' });
         }
 
-        // Find the customer by ID and update the fields
-        const updatedCustomer = await Customer.findByIdAndUpdate(customerId, updateData, { new: true });
+        // Determine file paths
+        const oldCustomerFilePath = path.join(customerFolderPath, `${old_email}.csv`);
+        const newCustomerFilePath = path.join(customerFolderPath, `${new_email || old_email}.csv`);
 
-        if (!updatedCustomer) {
+        // Read current customer data from old CSV
+        const customerData = await csvUtils.readLastLineFromCustomerFile(old_email);
+
+        if (!customerData) {
             return res.status(404).json({ message: 'Customer not found' });
         }
 
-        // Respond with the updated customer data
-        res.status(200).json({ message: 'Account updated successfully', customer: updatedCustomer });
+        const customer = customerData.split(',');
+
+        // Prepare updated customer object
+        const updatedCustomer = {
+            id: customer[0],
+            first_name: first_name || customer[1],
+            last_name: last_name || customer[2],
+            email: new_email || customer[3],  // Use new email if provided
+            password: customer[4],  // Default to existing password
+            phone: phone || customer[5],
+            company_name: company_name || customer[6],
+            company_address: company_address || customer[7],
+        };
+
+        // Hash the new password if provided
+        if (password) {
+            updatedCustomer.password = await bcrypt.hash(password, 10);
+        }
+
+        // Write updated customer data to new or existing CSV file
+        await csvUtils.writeDataToCustomerFile(updatedCustomer.email, updatedCustomer);
+
+        // If email changed, delete old CSV file
+        if (new_email && new_email !== old_email) {
+            fs.unlinkSync(oldCustomerFilePath);  // Remove old file
+        }
+
+        res.status(200).json({
+            message: 'Account updated successfully',
+            customer: updatedCustomer
+        });
     } catch (error) {
         console.error('Error updating account:', error);
         res.status(500).json({ message: 'Server error', error });
     }
 };
-
-
-

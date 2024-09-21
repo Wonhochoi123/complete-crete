@@ -6,14 +6,9 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="fonts/icomoon/style.css">
   <link rel="stylesheet" href="css/owl.carousel.min.css">
-
-  <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="css/bootstrap.min.css">
-
-  <!-- Style -->
   <link rel="stylesheet" href="css/style.css">
-
-  <title>New Project - Complete Crete</title>
+  <title>Quote Request - Complete Crete</title>
 
   <style>
     body {
@@ -29,7 +24,6 @@
       padding: 30px;
       border-radius: 10px;
       max-width: 900px;
-      margin-top: 70px;
     }
 
     iframe {
@@ -42,28 +36,15 @@
 <body>
 
 <!-- Top Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-  <div class="container">
-    <a class="navbar-brand" href="index.html">Complete Crete</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ml-auto">
-        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="portal.html">Back to Portal</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
+
 
 <!-- Main Content -->
 <div class="container">
-  <h2>New Project</h2>
-  <p>Please fill out the form below to start a new project.</p>
-
-  <!-- Embed Google Form -->
-  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc-PjDq17U-pMehCNNlQsygiM93DKsclc3s0hQPyV5Wq6I95Q/viewform?embedded=true" width="640" height="1330" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+  <ul class="navbar-nav ml-auto">
+    <li class="button"><a class="nav-link" href="portal.html">Back to Portal</a></li>
+  </ul>
+  <!-- Embed Google Form with autofilled values -->
+  <iframe id="quoteForm" src="" width="640" height="1330" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
 </div>
 
 <!-- Scripts -->
@@ -71,6 +52,28 @@
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/main.js"></script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const customerData = JSON.parse(localStorage.getItem('customerData'));
+    let formUrl;
+
+    if (customerData) {
+      // Use autofilled Google Form URL if customer is logged in
+      const firstName = encodeURIComponent(customerData.first_name);
+      const lastName = encodeURIComponent(customerData.last_name);
+      const phone = encodeURIComponent(customerData.phone);
+      const email = encodeURIComponent(customerData.email);
+
+      formUrl = `https://docs.google.com/forms/d/e/1FAIpQLSc-PjDq17U-pMehCNNlQsygiM93DKsclc3s0hQPyV5Wq6I95Q/viewform?embedded=true&usp=pp_url&entry.835635473=${firstName}%20${lastName}&entry.752261592=${phone}&entry.1289654602=${email}`;
+    } else {
+      // Use regular Google Form URL if user is not logged in
+      formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc-PjDq17U-pMehCNNlQsygiM93DKsclc3s0hQPyV5Wq6I95Q/viewform?embedded=true";
+    }
+    document.getElementById('quoteForm').src = formUrl;
+  });
+</script>
 
 </body>
 </html>
