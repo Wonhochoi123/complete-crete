@@ -5,11 +5,10 @@ const customerController = require('../controllers/customerController');
 // Register a new customer
 router.post('/new', customerController.createCustomer);
 
-
 // Login an existing customer
 router.post('/login', customerController.loginCustomer);
 
+// Update customer information
 router.put('/update', customerController.updateCustomer);
-
 
 module.exports = router;

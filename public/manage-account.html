@@ -87,6 +87,9 @@
     document.getElementById('phone').value = customerData.phone;
     document.getElementById('companyName').value = customerData.company_name;
     document.getElementById('companyAddress').value = customerData.company_address;
+
+    // Store old email for later use in the update
+    localStorage.setItem('oldEmail', customerData.email);
   });
 
   // Handle form submission
@@ -101,11 +104,15 @@
       return;  // Prevent form submission
     }
 
+    // Get the old email from localStorage
+    const oldEmail = localStorage.getItem('oldEmail');
+
     const updatedData = {
       customerId: document.getElementById('userId').value,
       first_name: document.getElementById('firstName').value,
       last_name: document.getElementById('lastName').value,
-      email: document.getElementById('email').value,
+      email: oldEmail,  // Sending the old email
+      new_email: document.getElementById('email').value, // Sending the new email
       phone: document.getElementById('phone').value,
       company_name: document.getElementById('companyName').value,
       company_address: document.getElementById('companyAddress').value,
@@ -121,14 +128,15 @@
             .then(data => {
               if (data.message === 'Account updated successfully') {
                 alert('Account updated successfully!');
-                localStorage.setItem('customerData', JSON.stringify(data.customer)); // Update localStorage
+                // Update localStorage with the new email and customer data
+                localStorage.setItem('customerData', JSON.stringify(data.customer));
+                localStorage.setItem('oldEmail', data.customer.email); // Update oldEmail
               } else {
                 alert('Failed to update account.');
               }
             })
             .catch(error => console.error('Error:', error));
   });
-
 
   // Function to copy ID
   function copyToClipboard() {
@@ -138,6 +146,7 @@
     alert('Copied ID: ' + copyText.value);
   }
 </script>
+
 
 </body>
 </html>

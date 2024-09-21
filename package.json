@@ -15,7 +15,9 @@
     "fast-csv": "^5.0.1",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.6.3"
+    "mongodb": "^6.9.0",
+    "mongoose": "^8.6.3",
+    "nodemailer": "^6.9.15"
   },
   "keywords": [],
   "author": "",
