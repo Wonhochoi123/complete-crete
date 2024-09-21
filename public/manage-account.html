@@ -119,7 +119,7 @@
       password: newPassword  // Optional password change
     };
 
-    fetch('http://localhost:5000/api/customers/update', {
+    fetch('https://complete-crete.onrender.com/api/customers/update', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedData)
