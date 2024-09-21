@@ -1,4 +1,5 @@
-document.getElementById('customerForm').addEventListener('submit', function (e) {
+// Handle Customer Registration Form
+document.getElementById('customerForm')?.addEventListener('submit', function (e) {
 	e.preventDefault();
 
 	const formData = {
@@ -11,7 +12,8 @@ document.getElementById('customerForm').addEventListener('submit', function (e) 
 		company_address: document.getElementById('company_address').value
 	};
 
-	fetch('http://localhost:5000/api/customers/new', {
+	// Adjust this URL to match your backend server
+	fetch('https://complete-crete.onrender.com/api/customers/new', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(formData),
@@ -28,6 +30,7 @@ document.getElementById('customerForm').addEventListener('submit', function (e) 
 		.catch(error => console.error('Error:', error));
 });
 
+// Handle Customer Login Form
 document.getElementById('loginForm')?.addEventListener('submit', function (e) {
 	e.preventDefault();
 
@@ -36,7 +39,8 @@ document.getElementById('loginForm')?.addEventListener('submit', function (e) {
 		password: document.getElementById('password').value
 	};
 
-	fetch('/api/customers/login', {
+	// Adjust this URL to match your backend server
+	fetch('https://complete-crete.onrender.com/api/customers/login', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -56,9 +60,8 @@ document.getElementById('loginForm')?.addEventListener('submit', function (e) {
 		.catch(error => console.error('Error:', error));
 });
 
-
-
-document.getElementById('manageAccountForm').addEventListener('submit', function (e) {
+// Handle Manage Account Form
+document.getElementById('manageAccountForm')?.addEventListener('submit', function (e) {
 	e.preventDefault();
 
 	const updatedData = {
@@ -71,7 +74,8 @@ document.getElementById('manageAccountForm').addEventListener('submit', function
 		password: document.getElementById('newPassword').value // Optional password change
 	};
 
-	fetch('/api/customers/update', {
+	// Adjust this URL to match your backend server
+	fetch('https://complete-crete.onrender.com/api/customers/update', {
 		method: 'PUT',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(updatedData)
