@@ -1,5 +1,5 @@
 {
-  "name": "complete-crete3",
+  "name": "complete-crete",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -15,8 +15,6 @@
     "fast-csv": "^5.0.1",
     "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.9.0",
-    "mongoose": "^8.6.3",
     "nodemailer": "^6.9.15"
   },
   "keywords": [],
